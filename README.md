@@ -1,0 +1,1 @@
+This repository is a workaround for nix not supporting relative path in flake imports.
