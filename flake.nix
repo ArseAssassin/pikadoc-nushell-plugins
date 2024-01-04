@@ -23,7 +23,17 @@
               src = ./.;
             };
 
-          packages.default = packages.nu_plugin_query;
+          packages.nu_plugin_query_prebuilt =
+            pkgs.stdenv.mkDerivation {
+              name = "nu_plugin_query";
+              src = ./.;
+              installPhase = ''
+                mkdir -p $out/bin
+                cp $src/bin/$system/nu_plugin_query $out/bin
+              '';
+            };
+
+          packages.default = packages.nu_plugin_query_prebuilt;
         }
       );
 }
