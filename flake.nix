@@ -16,24 +16,26 @@
           };
         in
         rec {
-          packages.nu_plugin_query =
+          packages.nu_plugin_query_build_from_source =
             let
               naersk' = pkgs.callPackage naersk {};
             in naersk'.buildPackage {
               src = ./.;
             };
 
-          packages.nu_plugin_query_prebuilt =
-            pkgs.stdenv.mkDerivation {
-              name = "nu_plugin_query";
-              src = ./.;
-              installPhase = ''
-                mkdir -p $out/bin
-                cp $src/bin/$system/nu_plugin_query $out/bin
-              '';
-            };
+          packages.nu_plugin_query =
+            if builtins.pathExists ./bin/${system}
+              then pkgs.stdenv.mkDerivation {
+                name = "nu_plugin_query";
+                src = ./.;
+                installPhase = ''
+                  mkdir -p $out/bin
+                  cp $src/bin/$system/nu_plugin_query $out/bin
+                '';
+              }
+              else packages.nu_plugin_query_build_from_source;
 
-          packages.default = packages.nu_plugin_query_prebuilt;
+          packages.default = packages.nu_plugin_query;
         }
       );
 }
